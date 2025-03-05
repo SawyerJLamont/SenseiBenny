@@ -10,7 +10,7 @@ import { Check, X } from "lucide-react"
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import type { WritingSystem } from "@/lib/data"
+import type { WritingSystem, VerbForm } from "@/lib/data"
 
 type ConjugationType = "Present Affirmative" | "Present Negative" | "Past Affirmative" | "Past Negative" | "Te Form"
 type AnswerMode = "type" | "reveal"
@@ -19,32 +19,30 @@ interface ConjugationItem {
   Word: {
     kanji: string
     hiragana: string
-    romaji: string
+    dictionary?: string
+    masu?: string
+    english?: string
+    wordType?: string
   }
   "Present Affirmative": {
     kanji: string
     hiragana: string
-    romaji: string
   }
   "Present Negative": {
     kanji: string
     hiragana: string
-    romaji: string
   }
   "Past Affirmative": {
     kanji: string
     hiragana: string
-    romaji: string
   }
   "Past Negative": {
     kanji: string
     hiragana: string
-    romaji: string
   }
   "Te Form": {
     kanji: string
     hiragana: string
-    romaji: string
   } | null
 }
 
@@ -62,7 +60,9 @@ export default function FlashCardApp({ conjugationData }: FlashCardAppProps) {
   const [selectedConjugationTypes, setSelectedConjugationTypes] = useState<ConjugationType[]>(["Present Affirmative"])
   const [open, setOpen] = useState(false)
   const [answerMode, setAnswerMode] = useState<AnswerMode>("type")
-  const [writingSystem, setWritingSystem] = useState<WritingSystem>("kanji")
+  const [writingSystem, setWritingSystem] = useState<WritingSystem>("hiragana")
+  const [verbForm, setVerbForm] = useState<VerbForm>("masu")
+  const [showVerbTypes, setShowVerbTypes] = useState(true)
 
   const conjugationTypes: ConjugationType[] = [
     "Present Affirmative",
@@ -74,8 +74,17 @@ export default function FlashCardApp({ conjugationData }: FlashCardAppProps) {
 
   useEffect(() => {
     const savedWritingSystem = localStorage.getItem("writingSystem") as WritingSystem
+    const savedVerbForm = localStorage.getItem("verbForm") as VerbForm
+    const savedShowVerbTypes = localStorage.getItem("showVerbTypes")
+
     if (savedWritingSystem) {
       setWritingSystem(savedWritingSystem)
+    }
+    if (savedVerbForm) {
+      setVerbForm(savedVerbForm)
+    }
+    if (savedShowVerbTypes !== null) {
+      setShowVerbTypes(savedShowVerbTypes === "true")
     }
   }, [])
 
@@ -147,6 +156,38 @@ export default function FlashCardApp({ conjugationData }: FlashCardAppProps) {
 
   if (conjugationData.length === 0) {
     return <div className="text-center">Loading data...</div>
+  }
+
+  // Get the appropriate word display based on writing system and verb form
+  const getWordDisplay = () => {
+    if (!currentWord) return ""
+
+    if (verbForm === "dictionary") {
+      return currentWord.Word[writingSystem]
+    } else {
+      // For masu form
+      if (writingSystem === "kanji" && currentWord.Word.masu) {
+        return currentWord.Word.masu
+      } else if (writingSystem === "hiragana") {
+        return currentWord.Word.hiragana + "ます"
+      } else {
+        // Fallback
+        return currentWord.Word[writingSystem] + "ます"
+      }
+    }
+  }
+
+  // Function to format word type for display
+  const formatWordType = (wordType?: string) => {
+    if (!wordType) return ""
+
+    // Format verb types
+    if (wordType === "verb-ru") return "Ru-verb"
+    if (wordType === "verb-u") return "U-verb"
+    if (wordType === "verb-irregular") return "Irregular verb"
+
+    // Format other types (for future use)
+    return wordType.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())
   }
 
   return (
@@ -239,11 +280,27 @@ export default function FlashCardApp({ conjugationData }: FlashCardAppProps) {
       <Card className="w-full">
         <CardHeader>
           <CardTitle className="text-center text-2xl">
-            {currentWord?.Word[writingSystem] || ""}
+            {getWordDisplay()}
             {writingSystem !== "kanji" && currentWord?.Word.kanji && (
-              <div className="text-sm text-muted-foreground mt-1">({currentWord.Word.kanji})</div>
+              <div className="text-sm text-muted-foreground mt-1">
+                (
+                {verbForm === "dictionary"
+                  ? currentWord.Word.kanji
+                  : currentWord.Word.masu || currentWord.Word.kanji + "ます"}
+                )
+              </div>
             )}
           </CardTitle>
+          {showVerbTypes && currentWord?.Word.wordType && (
+            <div className="flex justify-center">
+              <Badge variant="outline" className="mt-1">
+                {formatWordType(currentWord.Word.wordType)}
+              </Badge>
+            </div>
+          )}
+          {currentWord?.Word.english && (
+            <p className="text-center text-sm text-muted-foreground">{currentWord.Word.english}</p>
+          )}
           <p className="text-center text-muted-foreground">
             Conjugate to: <span className="font-medium">{currentConjugationType}</span>
           </p>
