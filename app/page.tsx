@@ -11,7 +11,7 @@ export default function Home() {
     <main className="flex min-h-screen flex-col items-center justify-between p-4 md:p-24">
       <div className="w-full max-w-3xl mx-auto">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold">Japanese Conjugation Flash Cards</h1>
+          <h1 className="text-3xl font-bold">Japanese Conjugation</h1>
           <Link href="/select">
             <Button variant="outline" size="icon">
               <Settings className="h-4 w-4" />

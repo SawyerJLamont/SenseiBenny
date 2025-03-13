@@ -10,19 +10,19 @@ import { Check, X } from "lucide-react"
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import type { WritingSystem, VerbForm } from "@/lib/data"
+import type { WritingSystem, VerbForm, WordType } from "@/lib/data"
 
 type ConjugationType = "Present Affirmative" | "Present Negative" | "Past Affirmative" | "Past Negative" | "Te Form"
 type AnswerMode = "type" | "reveal"
 
 interface ConjugationItem {
   Word: {
-    kanji: string
-    hiragana: string
-    dictionary?: string
-    masu?: string
-    english?: string
-    wordType?: string
+    dictionary: {
+      kanji: string
+      hiragana: string
+    }
+    definition: string
+    type: WordType
   }
   "Present Affirmative": {
     kanji: string
@@ -91,7 +91,7 @@ export default function FlashCardApp({ conjugationData }: FlashCardAppProps) {
   const getFilteredConjugationData = useCallback(() => {
     const selectedWords = new Set(JSON.parse(localStorage.getItem("selectedWords") || "[]"))
     if (selectedWords.size === 0) return conjugationData
-    return conjugationData.filter((item) => selectedWords.has(item.Word.kanji))
+    return conjugationData.filter((item) => selectedWords.has(item.Word.dictionary.kanji))
   }, [conjugationData])
 
   const getRandomWord = useCallback(() => {
@@ -163,28 +163,21 @@ export default function FlashCardApp({ conjugationData }: FlashCardAppProps) {
     if (!currentWord) return ""
 
     if (verbForm === "dictionary") {
-      return currentWord.Word[writingSystem]
+      return currentWord.Word.dictionary[writingSystem]
     } else {
-      // For masu form
-      if (writingSystem === "kanji" && currentWord.Word.masu) {
-        return currentWord.Word.masu
-      } else if (writingSystem === "hiragana") {
-        return currentWord.Word.hiragana + "ます"
-      } else {
-        // Fallback
-        return currentWord.Word[writingSystem] + "ます"
-      }
+      // For masu form, use the Present Affirmative form
+      return currentWord["Present Affirmative"][writingSystem]
     }
   }
 
   // Function to format word type for display
-  const formatWordType = (wordType?: string) => {
-    if (!wordType) return ""
-
+  const formatWordType = (wordType: WordType) => {
     // Format verb types
     if (wordType === "verb-ru") return "Ru-verb"
     if (wordType === "verb-u") return "U-verb"
     if (wordType === "verb-irregular") return "Irregular verb"
+    if (wordType === "adjective-i") return "i-adjective"
+    if (wordType === "adjective-na") return "na-adjective"
 
     // Format other types (for future use)
     return wordType.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())
@@ -281,26 +274,24 @@ export default function FlashCardApp({ conjugationData }: FlashCardAppProps) {
         <CardHeader>
           <CardTitle className="text-center text-2xl">
             {getWordDisplay()}
-            {writingSystem !== "kanji" && currentWord?.Word.kanji && (
+            {writingSystem !== "kanji" && currentWord && (
               <div className="text-sm text-muted-foreground mt-1">
                 (
                 {verbForm === "dictionary"
-                  ? currentWord.Word.kanji
-                  : currentWord.Word.masu || currentWord.Word.kanji + "ます"}
+                  ? currentWord.Word.dictionary.kanji
+                  : currentWord["Present Affirmative"].kanji}
                 )
               </div>
             )}
           </CardTitle>
-          {showVerbTypes && currentWord?.Word.wordType && (
+          {showVerbTypes && currentWord && (
             <div className="flex justify-center">
               <Badge variant="outline" className="mt-1">
-                {formatWordType(currentWord.Word.wordType)}
+                {formatWordType(currentWord.Word.type)}
               </Badge>
             </div>
           )}
-          {currentWord?.Word.english && (
-            <p className="text-center text-sm text-muted-foreground">{currentWord.Word.english}</p>
-          )}
+          {currentWord && <p className="text-center text-sm text-muted-foreground">{currentWord.Word.definition}</p>}
           <p className="text-center text-muted-foreground">
             Conjugate to: <span className="font-medium">{currentConjugationType}</span>
           </p>

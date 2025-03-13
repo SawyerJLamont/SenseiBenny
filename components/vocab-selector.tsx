@@ -13,17 +13,17 @@ import { Badge } from "@/components/ui/badge"
 import { Switch } from "@/components/ui/switch"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { ChevronDown } from "lucide-react"
-import type { WritingSystem, VerbForm } from "@/lib/data"
+import type { WritingSystem, VerbForm, WordType } from "@/lib/data"
 
 interface VocabSelectorProps {
   conjugationData: Array<{
     Word: {
-      kanji: string
-      hiragana: string
-      dictionary?: string
-      masu?: string
-      english?: string
-      wordType?: string
+      dictionary: {
+        kanji: string
+        hiragana: string
+      }
+      definition: string
+      type: WordType
     }
     [key: string]: any
   }>
@@ -93,13 +93,15 @@ export default function VocabSelector({ conjugationData }: VocabSelectorProps) {
     if (isAllSelected) {
       setSelectedWords(new Set())
     } else {
-      setSelectedWords(new Set(conjugationData.map((item) => item.Word.kanji)))
+      setSelectedWords(new Set(conjugationData.map((item) => item.Word.dictionary.kanji)))
     }
     setIsAllSelected(!isAllSelected)
   }
 
   const selectByType = (type: string) => {
-    const wordsOfType = conjugationData.filter((item) => item.Word.wordType === type).map((item) => item.Word.kanji)
+    const wordsOfType = conjugationData
+      .filter((item) => item.Word.type === type)
+      .map((item) => item.Word.dictionary.kanji)
 
     const newSelection = new Set(selectedWords)
     wordsOfType.forEach((word) => newSelection.add(word))
@@ -117,13 +119,13 @@ export default function VocabSelector({ conjugationData }: VocabSelectorProps) {
   }
 
   // Function to format word type for display
-  const formatWordType = (wordType?: string) => {
-    if (!wordType) return ""
-
+  const formatWordType = (wordType: WordType) => {
     // Format verb types
     if (wordType === "verb-ru") return "Ru-verb"
     if (wordType === "verb-u") return "U-verb"
     if (wordType === "verb-irregular") return "Irregular verb"
+    if (wordType === "adjective-i") return "i-adjective"
+    if (wordType === "adjective-na") return "na-adjective"
 
     // Format other types (for future use)
     return wordType.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())
@@ -171,7 +173,7 @@ export default function VocabSelector({ conjugationData }: VocabSelectorProps) {
           <h3 className="text-lg font-semibold">Display Options</h3>
           <div className="flex items-center space-x-2">
             <Switch id="show-verb-types" checked={showVerbTypes} onCheckedChange={setShowVerbTypes} />
-            <Label htmlFor="show-verb-types">Show verb types (Ru-verb, U-verb, etc.)</Label>
+            <Label htmlFor="show-verb-types">Show word types (Ru-verb, U-verb, etc.)</Label>
           </div>
         </div>
 
@@ -196,6 +198,8 @@ export default function VocabSelector({ conjugationData }: VocabSelectorProps) {
                   <DropdownMenuItem onClick={() => selectByType("verb-irregular")}>
                     All Irregular verbs
                   </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => selectByType("adjective-i")}>All i-adjectives</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => selectByType("adjective-na")}>All na-adjectives</DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
@@ -203,37 +207,37 @@ export default function VocabSelector({ conjugationData }: VocabSelectorProps) {
           <ScrollArea className="h-[400px] pr-4">
             <div className="space-y-4">
               {conjugationData.map((item) => (
-                <div key={item.Word.kanji} className="flex items-center space-x-2">
+                <div key={item.Word.dictionary.kanji} className="flex items-center space-x-2">
                   <Checkbox
-                    id={item.Word.kanji}
-                    checked={selectedWords.has(item.Word.kanji)}
-                    onCheckedChange={() => toggleWord(item.Word.kanji)}
+                    id={item.Word.dictionary.kanji}
+                    checked={selectedWords.has(item.Word.dictionary.kanji)}
+                    onCheckedChange={() => toggleWord(item.Word.dictionary.kanji)}
                   />
                   <div className="flex flex-col">
                     <div className="flex items-center gap-2">
                       <Label
-                        htmlFor={item.Word.kanji}
+                        htmlFor={item.Word.dictionary.kanji}
                         className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                       >
                         {verbForm === "dictionary"
-                          ? item.Word[writingSystem]
-                          : item.Word.masu && writingSystem === "kanji"
-                            ? item.Word.masu
-                            : item.Word.hiragana + "ます"}
+                          ? item.Word.dictionary[writingSystem]
+                          : item["Present Affirmative"][writingSystem]}
                         {writingSystem !== "kanji" && (
                           <span className="text-muted-foreground ml-2">
-                            ({verbForm === "dictionary" ? item.Word.kanji : item.Word.masu || item.Word.kanji + "ます"})
+                            (
+                            {verbForm === "dictionary" ? item.Word.dictionary.kanji : item["Present Affirmative"].kanji}
+                            )
                           </span>
                         )}
                       </Label>
-                      {showVerbTypes && item.Word.wordType && (
+                      {showVerbTypes && (
                         <Badge variant="outline" className="text-xs">
-                          {formatWordType(item.Word.wordType)}
+                          {formatWordType(item.Word.type)}
                         </Badge>
                       )}
                     </div>
-                    {item.Word.english && (
-                      <span className="text-xs text-muted-foreground mt-1">{item.Word.english}</span>
+                    {item.Word.definition && (
+                      <span className="text-xs text-muted-foreground mt-1">{item.Word.definition}</span>
                     )}
                   </div>
                 </div>

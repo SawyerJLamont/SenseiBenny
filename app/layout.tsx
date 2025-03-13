@@ -11,9 +11,8 @@ import FirstTimeModal from "@/components/first-time-modal"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Japanese Conjugation Practice",
-  description: "Practice Japanese verb conjugations",
-    generator: 'v0.dev'
+  title: "Sensei Benny",
+  description: "Practice Japanese word conjugations",
 }
 
 export default function RootLayout({
@@ -47,7 +46,7 @@ export default function RootLayout({
             <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-10">
               <nav className="max-w-5xl mx-auto px-4 flex items-center justify-between h-14">
                 <Link href="/" className="font-semibold text-lg">
-                  Japanese Conjugation
+                  Sensei Benny
                 </Link>
                 <TooltipProvider>
                   <div className="flex items-center gap-2">

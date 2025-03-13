@@ -1,12 +1,15 @@
 export interface ConjugationItem {
   Word: {
-    kanji: string
-    hiragana: string
-    dictionary?: string
-    masu?: string
-    english?: string
-    wordType?: string
+    // Dictionary form information
+    dictionary: {
+      kanji: string
+      hiragana: string
+    }
+    // Word metadata
+    definition: string
+    type: WordType
   }
+  // Conjugation forms
   "Present Affirmative": {
     kanji: string
     hiragana: string
@@ -42,16 +45,16 @@ export type WordType =
   | "particle"
   | "expression"
 
-// Update the conjugation data to include dictionary and masu forms
+// Restructured conjugation data with improved organization
 export const conjugationData: ConjugationItem[] = [
   {
     Word: {
-      kanji: "見る",
-      hiragana: "みる",
-      dictionary: "見る",
-      masu: "見ます",
-      english: "to see/to look",
-      wordType: "verb-ru",
+      dictionary: {
+        kanji: "見る",
+        hiragana: "みる",
+      },
+      definition: "to see/to look",
+      type: "verb-ru",
     },
     "Present Affirmative": {
       kanji: "見ます",
@@ -76,12 +79,12 @@ export const conjugationData: ConjugationItem[] = [
   },
   {
     Word: {
-      kanji: "食べる",
-      hiragana: "たべる",
-      dictionary: "食べる",
-      masu: "食べます",
-      english: "to eat",
-      wordType: "verb-ru",
+      dictionary: {
+        kanji: "食べる",
+        hiragana: "たべる",
+      },
+      definition: "to eat",
+      type: "verb-ru",
     },
     "Present Affirmative": {
       kanji: "食べます",
@@ -106,12 +109,12 @@ export const conjugationData: ConjugationItem[] = [
   },
   {
     Word: {
-      kanji: "飲む",
-      hiragana: "のむ",
-      dictionary: "飲む",
-      masu: "飲みます",
-      english: "to drink",
-      wordType: "verb-u",
+      dictionary: {
+        kanji: "飲む",
+        hiragana: "のむ",
+      },
+      definition: "to drink",
+      type: "verb-u",
     },
     "Present Affirmative": {
       kanji: "飲みます",
@@ -136,12 +139,12 @@ export const conjugationData: ConjugationItem[] = [
   },
   {
     Word: {
-      kanji: "話す",
-      hiragana: "はなす",
-      dictionary: "話す",
-      masu: "話します",
-      english: "to speak/to talk",
-      wordType: "verb-u",
+      dictionary: {
+        kanji: "話す",
+        hiragana: "はなす",
+      },
+      definition: "to speak/to talk",
+      type: "verb-u",
     },
     "Present Affirmative": {
       kanji: "話します",
@@ -166,12 +169,12 @@ export const conjugationData: ConjugationItem[] = [
   },
   {
     Word: {
-      kanji: "聞く",
-      hiragana: "きく",
-      dictionary: "聞く",
-      masu: "聞きます",
-      english: "to listen/to hear",
-      wordType: "verb-u",
+      dictionary: {
+        kanji: "聞く",
+        hiragana: "きく",
+      },
+      definition: "to listen/to hear",
+      type: "verb-u",
     },
     "Present Affirmative": {
       kanji: "聞きます",
@@ -196,12 +199,12 @@ export const conjugationData: ConjugationItem[] = [
   },
   {
     Word: {
-      kanji: "書く",
-      hiragana: "かく",
-      dictionary: "書く",
-      masu: "書きます",
-      english: "to write",
-      wordType: "verb-u",
+      dictionary: {
+        kanji: "書く",
+        hiragana: "かく",
+      },
+      definition: "to write",
+      type: "verb-u",
     },
     "Present Affirmative": {
       kanji: "書きます",
@@ -226,12 +229,12 @@ export const conjugationData: ConjugationItem[] = [
   },
   {
     Word: {
-      kanji: "読む",
-      hiragana: "よむ",
-      dictionary: "読む",
-      masu: "読みます",
-      english: "to read",
-      wordType: "verb-u",
+      dictionary: {
+        kanji: "読む",
+        hiragana: "よむ",
+      },
+      definition: "to read",
+      type: "verb-u",
     },
     "Present Affirmative": {
       kanji: "読みます",
@@ -256,12 +259,12 @@ export const conjugationData: ConjugationItem[] = [
   },
   {
     Word: {
-      kanji: "買う",
-      hiragana: "かう",
-      dictionary: "買う",
-      masu: "買います",
-      english: "to buy",
-      wordType: "verb-u",
+      dictionary: {
+        kanji: "買う",
+        hiragana: "かう",
+      },
+      definition: "to buy",
+      type: "verb-u",
     },
     "Present Affirmative": {
       kanji: "買います",
@@ -286,12 +289,12 @@ export const conjugationData: ConjugationItem[] = [
   },
   {
     Word: {
-      kanji: "行く",
-      hiragana: "いく",
-      dictionary: "行く",
-      masu: "行きます",
-      english: "to go",
-      wordType: "verb-u",
+      dictionary: {
+        kanji: "行く",
+        hiragana: "いく",
+      },
+      definition: "to go",
+      type: "verb-u",
     },
     "Present Affirmative": {
       kanji: "行きます",
@@ -316,12 +319,12 @@ export const conjugationData: ConjugationItem[] = [
   },
   {
     Word: {
-      kanji: "来る",
-      hiragana: "くる",
-      dictionary: "来る",
-      masu: "来ます",
-      english: "to come",
-      wordType: "verb-irregular",
+      dictionary: {
+        kanji: "来る",
+        hiragana: "くる",
+      },
+      definition: "to come",
+      type: "verb-irregular",
     },
     "Present Affirmative": {
       kanji: "来ます",
@@ -346,12 +349,12 @@ export const conjugationData: ConjugationItem[] = [
   },
   {
     Word: {
-      kanji: "する",
-      hiragana: "する",
-      dictionary: "する",
-      masu: "します",
-      english: "to do",
-      wordType: "verb-irregular",
+      dictionary: {
+        kanji: "する",
+        hiragana: "する",
+      },
+      definition: "to do",
+      type: "verb-irregular",
     },
     "Present Affirmative": {
       kanji: "します",
@@ -376,12 +379,12 @@ export const conjugationData: ConjugationItem[] = [
   },
   {
     Word: {
-      kanji: "分かる",
-      hiragana: "わかる",
-      dictionary: "分かる",
-      masu: "分かります",
-      english: "to understand",
-      wordType: "verb-u",
+      dictionary: {
+        kanji: "分かる",
+        hiragana: "わかる",
+      },
+      definition: "to understand",
+      type: "verb-u",
     },
     "Present Affirmative": {
       kanji: "分かります",
@@ -406,12 +409,12 @@ export const conjugationData: ConjugationItem[] = [
   },
   {
     Word: {
-      kanji: "有る",
-      hiragana: "ある",
-      dictionary: "有る",
-      masu: "有ります",
-      english: "to exist/to have (inanimate)",
-      wordType: "verb-u",
+      dictionary: {
+        kanji: "有る",
+        hiragana: "ある",
+      },
+      definition: "to exist/to have (inanimate)",
+      type: "verb-u",
     },
     "Present Affirmative": {
       kanji: "有ります",
@@ -436,12 +439,12 @@ export const conjugationData: ConjugationItem[] = [
   },
   {
     Word: {
-      kanji: "居る",
-      hiragana: "いる",
-      dictionary: "居る",
-      masu: "居ます",
-      english: "to exist/to be (animate)",
-      wordType: "verb-ru",
+      dictionary: {
+        kanji: "居る",
+        hiragana: "いる",
+      },
+      definition: "to exist/to be (animate)",
+      type: "verb-ru",
     },
     "Present Affirmative": {
       kanji: "居ます",
@@ -466,12 +469,12 @@ export const conjugationData: ConjugationItem[] = [
   },
   {
     Word: {
-      kanji: "泳ぐ",
-      hiragana: "およぐ",
-      dictionary: "泳ぐ",
-      masu: "泳ぎます",
-      english: "to swim",
-      wordType: "verb-u",
+      dictionary: {
+        kanji: "泳ぐ",
+        hiragana: "およぐ",
+      },
+      definition: "to swim",
+      type: "verb-u",
     },
     "Present Affirmative": {
       kanji: "泳ぎます",
