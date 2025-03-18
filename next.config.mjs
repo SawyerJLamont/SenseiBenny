@@ -22,8 +22,8 @@ const nextConfig = {
     parallelServerCompiles: true,
   },
   output: 'export',
-  assetPrefix: process.env.NODE_ENV === 'production' ? '/SenseiBenny' : '',
-  basePath: process.env.NODE_ENV === 'production' ? '/SenseiBenny' : '',
+  // Remove basePath and assetPrefix for custom domains
+  // assetPrefix and basePath should only be used for github.io subpaths
 }
 
 mergeConfig(nextConfig, userConfig)
