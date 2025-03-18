@@ -3,6 +3,7 @@ import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
 import Link from "next/link"
+import Image from "next/image" // Import Next.js Image component
 import { Button } from "@/components/ui/button"
 import { Settings, HelpCircle, BookOpen } from "lucide-react"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
@@ -25,20 +26,24 @@ export default function RootLayout({
       <body className={inter.className}>
         <div className="min-h-screen flex">
           {/* Left background */}
-          <div className="fixed left-0 top-0 bottom-0 w-1/6 -z-10">
-            <img
+          <div className="fixed left-0 top-0 bottom-0 w-1/6 -z-10 relative">
+            <Image
               src="/benny.jpg"
               alt=""
-              className="h-full w-full object-cover opacity-15"
+              fill
+              className="object-cover opacity-15"
+              priority
             />
           </div>
 
           {/* Right background */}
-          <div className="fixed right-0 top-0 bottom-0 w-1/6 -z-10">
-            <img
+          <div className="fixed right-0 top-0 bottom-0 w-1/6 -z-10 relative">
+            <Image
               src="/benny.jpg"
               alt=""
-              className="h-full w-full object-cover opacity-15"
+              fill
+              className="object-cover opacity-15"
+              priority
             />
           </div>
 
@@ -103,7 +108,3 @@ export default function RootLayout({
     </html>
   )
 }
-
-
-
-import './globals.css'
