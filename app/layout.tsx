@@ -20,38 +20,27 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  // Create base path for assets based on the environment
-  const basePath = process.env.NODE_ENV === 'production' 
-    ? `/${process.env.NEXT_PUBLIC_BASE_PATH || ''}`
-    : '';
-  
-  const backgroundImagePath = `${basePath}/benny.jpg`;
-
   return (
     <html lang="en">
       <body className={inter.className}>
         <div className="min-h-screen flex">
           {/* Left background */}
-          <div 
-            className="fixed left-0 top-0 bottom-0 w-1/6 -z-10"
-            style={{
-              backgroundImage: `url(${backgroundImagePath})`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              opacity: 0.15
-            }}
-          />
+          <div className="fixed left-0 top-0 bottom-0 w-1/6 -z-10">
+            <img
+              src="/benny.jpg"
+              alt=""
+              className="h-full w-full object-cover opacity-15"
+            />
+          </div>
 
           {/* Right background */}
-          <div 
-            className="fixed right-0 top-0 bottom-0 w-1/6 -z-10"
-            style={{
-              backgroundImage: `url(${backgroundImagePath})`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              opacity: 0.15
-            }}
-          />
+          <div className="fixed right-0 top-0 bottom-0 w-1/6 -z-10">
+            <img
+              src="/benny.jpg"
+              alt=""
+              className="h-full w-full object-cover opacity-15"
+            />
+          </div>
 
           <div className="min-h-screen flex flex-col w-full">
             <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-10">
@@ -114,3 +103,7 @@ export default function RootLayout({
     </html>
   )
 }
+
+
+
+import './globals.css'
