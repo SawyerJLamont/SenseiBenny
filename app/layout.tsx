@@ -27,7 +27,7 @@ export default function RootLayout({
           {/* Left background */}
           <div className="fixed left-0 top-0 bottom-0 w-1/6 -z-10">
             <img
-              src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/benny.jpg-xn47BmvSl9AWzdaHAOBnKozeC2DEXf.jpeg"
+              src="/benny.jpg"
               alt=""
               className="h-full w-full object-cover opacity-15"
             />
@@ -36,7 +36,7 @@ export default function RootLayout({
           {/* Right background */}
           <div className="fixed right-0 top-0 bottom-0 w-1/6 -z-10">
             <img
-              src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/benny.jpg-xn47BmvSl9AWzdaHAOBnKozeC2DEXf.jpeg"
+              src="/benny.jpg"
               alt=""
               className="h-full w-full object-cover opacity-15"
             />
