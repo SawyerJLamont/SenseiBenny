@@ -45,7 +45,7 @@ export default function FirstTimeModal() {
             useful to know. If you are not from Oregon State, you can still use this tool to practice
             Japanese verb conjugations. Please look at the quick guide before jumping in so that you can 
             get the most out of this tool. If you find any errors in conjugation or experince any bugs, 
-            please let me know by emailing me at <a href="mailto: lamontsa@oregonstate.edu "></a>
+            please let me know by emailing me at lamontsa@oregonstate.edu.
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4 py-4">

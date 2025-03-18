@@ -11,7 +11,7 @@ export default function GettingStartedPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Welcome to Japanese Conjugation Practice!</CardTitle>
+            <CardTitle>Welcome to Sensei Benny!</CardTitle>
             <CardDescription>
               Learn how to use this tool effectively to master Japanese verb conjugations.
             </CardDescription>
@@ -38,7 +38,7 @@ export default function GettingStartedPage() {
               <ul className="list-disc list-inside space-y-2 text-muted-foreground">
                 <li>Random Practice: Test all conjugation types</li>
                 <li>Specific Practice: Focus on particular conjugation patterns</li>
-                <li>Type Answer: Write your answers to test recall</li>
+                <li>Type Answer: Write your answers to test recall (Must be written in hiragana or kanji, will not work with romanji)</li>
                 <li>Reveal Answer: Study the patterns without testing</li>
               </ul>
             </div>
