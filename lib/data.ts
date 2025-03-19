@@ -8,24 +8,25 @@ export interface ConjugationItem {
     // Word metadata
     definition: string
     type: WordType
+    class: ClassLevel // New field for class level
   }
-  // Conjugation forms
+  // Conjugation forms - all can be null for non-verb types
   "Present Affirmative": {
     kanji: string
     hiragana: string
-  }
+  } | null
   "Present Negative": {
     kanji: string
     hiragana: string
-  }
+  } | null
   "Past Affirmative": {
     kanji: string
     hiragana: string
-  }
+  } | null
   "Past Negative": {
     kanji: string
     hiragana: string
-  }
+  } | null
   "Te Form": {
     kanji: string
     hiragana: string
@@ -34,6 +35,7 @@ export interface ConjugationItem {
 
 export type WritingSystem = "kanji" | "hiragana"
 export type VerbForm = "dictionary" | "masu"
+export type ClassLevel = "111" | "112" | "EX" // Type for class levels
 export type WordType =
   | "verb-ru"
   | "verb-u"
@@ -45,7 +47,7 @@ export type WordType =
   | "particle"
   | "expression"
 
-// Restructured conjugation data with improved organization
+// Japanese conjugation data
 export const conjugationData: ConjugationItem[] = [
   {
   "Word": {
@@ -54,7 +56,8 @@ export const conjugationData: ConjugationItem[] = [
       "hiragana": "わかる"
     },
     "definition": "To understand",
-    "type": "verb-u"
+    "type": "verb-u",
+    "class": "111"
   },
   "Present Affirmative": {
     "kanji": "分かります",
@@ -83,7 +86,8 @@ export const conjugationData: ConjugationItem[] = [
       "hiragana": "する"
     },
     "definition": "To do/ To play",
-    "type": "verb-irregular"
+    "type": "verb-irregular",
+    "class": "111"
   },
   "Present Affirmative": {
     "kanji": "します",
@@ -112,7 +116,8 @@ export const conjugationData: ConjugationItem[] = [
       "hiragana": "のむ"
     },
     "definition": "To drink",
-    "type": "verb-u"
+    "type": "verb-u",
+    "class": "111"
   },
   "Present Affirmative": {
     "kanji": "飲みます",
@@ -141,7 +146,8 @@ export const conjugationData: ConjugationItem[] = [
       "hiragana": "たべる"
     },
     "definition": "To eat",
-    "type": "verb-ru"
+    "type": "verb-ru",
+    "class": "111"
   },
   "Present Affirmative": {
     "kanji": "食べます",
@@ -170,7 +176,8 @@ export const conjugationData: ConjugationItem[] = [
       "hiragana": "いく"
     },
     "definition": "To go",
-    "type": "verb-u"
+    "type": "verb-u",
+    "class": "111"
   },
   "Present Affirmative": {
     "kanji": "行きます",
@@ -199,7 +206,8 @@ export const conjugationData: ConjugationItem[] = [
       "hiragana": "くる"
     },
     "definition": "To come",
-    "type": "verb-u"
+    "type": "verb-u",
+    "class": "111"
   },
   "Present Affirmative": {
     "kanji": "来ます",
@@ -228,7 +236,8 @@ export const conjugationData: ConjugationItem[] = [
       "hiragana": "かえる"
     },
     "definition": "To return",
-    "type": "verb-u"
+    "type": "verb-u",
+    "class": "112"
   },
   "Present Affirmative": {
     "kanji": "帰ります",
@@ -257,7 +266,8 @@ export const conjugationData: ConjugationItem[] = [
       "hiragana": "みる"
     },
     "definition": "To see",
-    "type": "verb-ru"
+    "type": "verb-ru",
+    "class": "112"
   },
   "Present Affirmative": {
     "kanji": "見ます",
@@ -286,7 +296,8 @@ export const conjugationData: ConjugationItem[] = [
       "hiragana": "みせる"
     },
     "definition": "To be seen",
-    "type": "verb-ru"
+    "type": "verb-ru",
+    "class": "112"
   },
   "Present Affirmative": {
     "kanji": "見せます",
@@ -315,7 +326,8 @@ export const conjugationData: ConjugationItem[] = [
       "hiragana": "できる"
     },
     "definition": "To be done",
-    "type": "verb-ru"
+    "type": "verb-ru",
+    "class": "111"
   },
   "Present Affirmative": {
     "kanji": "出来ます",
@@ -344,7 +356,8 @@ export const conjugationData: ConjugationItem[] = [
       "hiragana": "つくる"
     },
     "definition": "To make",
-    "type": "verb-u"
+    "type": "verb-u",
+    "class": "111"
   },
   "Present Affirmative": {
     "kanji": "作ります",
@@ -373,7 +386,8 @@ export const conjugationData: ConjugationItem[] = [
       "hiragana": "つかいる"
     },
     "definition": "To use",
-    "type": "verb-ru"
+    "type": "verb-ru",
+    "class": "111"
   },
   "Present Affirmative": {
     "kanji": "使います",
@@ -402,7 +416,8 @@ export const conjugationData: ConjugationItem[] = [
       "hiragana": "ちがう"
     },
     "definition": "To differ",
-    "type": "verb-u"
+    "type": "verb-u",
+    "class": "111"
   },
   "Present Affirmative": {
     "kanji": "違います",
@@ -431,7 +446,8 @@ export const conjugationData: ConjugationItem[] = [
       "hiragana": "こまる"
     },
     "definition": "To become a problem",
-    "type": "verb-u"
+    "type": "verb-u",
+    "class": "111"
   },
   "Present Affirmative": {
     "kanji": "困ります",
@@ -460,7 +476,8 @@ export const conjugationData: ConjugationItem[] = [
       "hiragana": "いる"
     },
     "definition": "To be (not alive)",
-    "type": "verb-ru"
+    "type": "verb-ru",
+    "class": "112"
   },
   "Present Affirmative": {
     "kanji": "います",
@@ -478,10 +495,7 @@ export const conjugationData: ConjugationItem[] = [
     "kanji": "いませんでした",
     "hiragana": "いませんでした"
   },
-  "Te Form": {
-    "kanji": null,
-    "hiragana": null
-  }
+  "Te Form": null
 },  {
   "Word": {
     "dictionary": {
@@ -489,7 +503,8 @@ export const conjugationData: ConjugationItem[] = [
       "hiragana": "ある"
     },
     "definition": "To be (animate)",
-    "type": "verb-u"
+    "type": "verb-u",
+    "class": "112"
   },
   "Present Affirmative": {
     "kanji": "あります",
@@ -507,8 +522,515 @@ export const conjugationData: ConjugationItem[] = [
     "kanji": "ありませんでした",
     "hiragana": "ありませんでした"
   },
+  "Te Form": null
+},  {
+  "Word": {
+    "dictionary": {
+      "kanji": "買う",
+      "hiragana": "かう"
+    },
+    "definition": "To buy",
+    "type": "verb-ru",
+    "class": "111"
+  },
+  "Present Affirmative": {
+    "kanji": "買います",
+    "hiragana": "かいます"
+  },
+  "Present Negative": {
+    "kanji": "買いません",
+    "hiragana": "かいません"
+  },
+  "Past Affirmative": {
+    "kanji": "買いました",
+    "hiragana": "かいました"
+  },
+  "Past Negative": {
+    "kanji": "買いませんでした",
+    "hiragana": "かいませんでした"
+  },
   "Te Form": {
-    "kanji": null,
-    "hiragana": null
+    "kanji": "買って",
+    "hiragana": "かって"
+  }
+},  {
+  "Word": {
+    "dictionary": {
+      "kanji": "起きる",
+      "hiragana": "おきる"
+    },
+    "definition": "To get up",
+    "type": "verb-ru",
+    "class": "EX"
+  },
+  "Present Affirmative": {
+    "kanji": "起きます",
+    "hiragana": "おきます"
+  },
+  "Present Negative": {
+    "kanji": "起きません",
+    "hiragana": "おきません"
+  },
+  "Past Affirmative": {
+    "kanji": "起きました",
+    "hiragana": "おきました"
+  },
+  "Past Negative": {
+    "kanji": "起きませんでした",
+    "hiragana": "おきませんでした"
+  },
+  "Te Form": {
+    "kanji": "起きて",
+    "hiragana": "おきて"
+  }
+},  {
+  "Word": {
+    "dictionary": {
+      "kanji": "寝る",
+      "hiragana": "ねる"
+    },
+    "definition": "To sleep",
+    "type": "verb-ru",
+    "class": "EX"
+  },
+  "Present Affirmative": {
+    "kanji": "寝ます",
+    "hiragana": "ねます"
+  },
+  "Present Negative": {
+    "kanji": "寝ません",
+    "hiragana": "ねません"
+  },
+  "Past Affirmative": {
+    "kanji": "寝ました",
+    "hiragana": "ねました"
+  },
+  "Past Negative": {
+    "kanji": "寝ませんでした",
+    "hiragana": "ねませんでした"
+  },
+  "Te Form": {
+    "kanji": "寝て",
+    "hiragana": "ねて"
+  }
+},  {
+  "Word": {
+    "dictionary": {
+      "kanji": "教える",
+      "hiragana": "おしえる"
+    },
+    "definition": "To teach",
+    "type": "verb-ru",
+    "class": "112"
+  },
+  "Present Affirmative": {
+    "kanji": "教えます",
+    "hiragana": "おしえます"
+  },
+  "Present Negative": {
+    "kanji": "教えません",
+    "hiragana": "おしえません"
+  },
+  "Past Affirmative": {
+    "kanji": "教えました",
+    "hiragana": "おしえました"
+  },
+  "Past Negative": {
+    "kanji": "教えませんでした",
+    "hiragana": "おしえませんでした"
+  },
+  "Te Form": {
+    "kanji": "教えて",
+    "hiragana": "おしえて"
+  }
+},  {
+  "Word": {
+    "dictionary": {
+      "kanji": "覚える",
+      "hiragana": "おぼえる"
+    },
+    "definition": "To remember/memorize",
+    "type": "verb-ru",
+    "class": "EX"
+  },
+  "Present Affirmative": {
+    "kanji": "覚えます",
+    "hiragana": "おぼえます"
+  },
+  "Present Negative": {
+    "kanji": "覚えません",
+    "hiragana": "おぼえません"
+  },
+  "Past Affirmative": {
+    "kanji": "覚えました",
+    "hiragana": "おぼえました"
+  },
+  "Past Negative": {
+    "kanji": "覚えませんでした",
+    "hiragana": "おぼえませんでした"
+  },
+  "Te Form": {
+    "kanji": "覚えて",
+    "hiragana": "おぼえて"
+  }
+},  {
+  "Word": {
+    "dictionary": {
+      "kanji": "聞く",
+      "hiragana": "きく"
+    },
+    "definition": "To listen",
+    "type": "verb-u",
+    "class": "EX"
+  },
+  "Present Affirmative": {
+    "kanji": "聞きます",
+    "hiragana": "ききます"
+  },
+  "Present Negative": {
+    "kanji": "聞きません",
+    "hiragana": "ききません"
+  },
+  "Past Affirmative": {
+    "kanji": "聞きました",
+    "hiragana": "ききました"
+  },
+  "Past Negative": {
+    "kanji": "聞きませんでした",
+    "hiragana": "ききませんでした"
+  },
+  "Te Form": {
+    "kanji": "聞いて",
+    "hiragana": "きいて"
+  }
+},  {
+  "Word": {
+    "dictionary": {
+      "kanji": "話す",
+      "hiragana": "はなす"
+    },
+    "definition": "To speak",
+    "type": "verb-u",
+    "class": "EX"
+  },
+  "Present Affirmative": {
+    "kanji": "話します",
+    "hiragana": "はなします"
+  },
+  "Present Negative": {
+    "kanji": "話しません",
+    "hiragana": "はなしません"
+  },
+  "Past Affirmative": {
+    "kanji": "話しました",
+    "hiragana": "はなしました"
+  },
+  "Past Negative": {
+    "kanji": "話しませんでした",
+    "hiragana": "はなしませんした"
+  },
+  "Te Form": {
+    "kanji": "話して",
+    "hiragana": "はなして"
+  }
+},  {
+  "Word": {
+    "dictionary": {
+      "kanji": "読む",
+      "hiragana": "よむ"
+    },
+    "definition": "To read",
+    "type": "verb-u",
+    "class": "EX"
+  },
+  "Present Affirmative": {
+    "kanji": "読みます",
+    "hiragana": "よみます"
+  },
+  "Present Negative": {
+    "kanji": "読みません",
+    "hiragana": "よみません"
+  },
+  "Past Affirmative": {
+    "kanji": "読みました",
+    "hiragana": "よみました"
+  },
+  "Past Negative": {
+    "kanji": "読みませんでした",
+    "hiragana": "よみませんでした"
+  },
+  "Te Form": {
+    "kanji": "読んで",
+    "hiragana": "よんで"
+  }
+},  {
+  "Word": {
+    "dictionary": {
+      "kanji": "座る",
+      "hiragana": "すわる"
+    },
+    "definition": "To sit",
+    "type": "verb-u",
+    "class": "EX"
+  },
+  "Present Affirmative": {
+    "kanji": "座ります",
+    "hiragana": "すわります"
+  },
+  "Present Negative": {
+    "kanji": "座りません",
+    "hiragana": "すわりません"
+  },
+  "Past Affirmative": {
+    "kanji": "座りました",
+    "hiragana": "すわりました"
+  },
+  "Past Negative": {
+    "kanji": "座りませんでした",
+    "hiragana": "すわりませんでした"
+  },
+  "Te Form": {
+    "kanji": "座って",
+    "hiragana": "すわって"
+  }
+},  {
+  "Word": {
+    "dictionary": {
+      "kanji": "立つ",
+      "hiragana": "たつ"
+    },
+    "definition": "To stand",
+    "type": "verb-u",
+    "class": "EX"
+  },
+  "Present Affirmative": {
+    "kanji": "立ちます",
+    "hiragana": "たちます"
+  },
+  "Present Negative": {
+    "kanji": "立ちません",
+    "hiragana": "たちません"
+  },
+  "Past Affirmative": {
+    "kanji": "立ちました",
+    "hiragana": "たちました"
+  },
+  "Past Negative": {
+    "kanji": "立ちませんでした",
+    "hiragana": "たちませんでした"
+  },
+  "Te Form": {
+    "kanji": "立って",
+    "hiragana": "たって"
+  }
+},  {
+  "Word": {
+    "dictionary": {
+      "kanji": "書く",
+      "hiragana": "かく"
+    },
+    "definition": "To write",
+    "type": "verb-u",
+    "class": "EX"
+  },
+  "Present Affirmative": {
+    "kanji": "書きます",
+    "hiragana": "かきます"
+  },
+  "Present Negative": {
+    "kanji": "書きません",
+    "hiragana": "かきません"
+  },
+  "Past Affirmative": {
+    "kanji": "書きました",
+    "hiragana": "かきました"
+  },
+  "Past Negative": {
+    "kanji": "書きませんでした",
+    "hiragana": "かきませんでした"
+  },
+  "Te Form": {
+    "kanji": "書いて",
+    "hiragana": "かいて"
+  }
+},  {
+  "Word": {
+    "dictionary": {
+      "kanji": "踊る",
+      "hiragana": "おどる"
+    },
+    "definition": "To dance",
+    "type": "verb-u",
+    "class": "EX"
+  },
+  "Present Affirmative": {
+    "kanji": "踊ります",
+    "hiragana": "おどります"
+  },
+  "Present Negative": {
+    "kanji": "踊りません",
+    "hiragana": "おどりません"
+  },
+  "Past Affirmative": {
+    "kanji": "踊りました",
+    "hiragana": "おどりました"
+  },
+  "Past Negative": {
+    "kanji": "踊りませんでした",
+    "hiragana": "おどりませんでした"
+  },
+  "Te Form": {
+    "kanji": "踊って",
+    "hiragana": "おどって"
+  }
+},  {
+  "Word": {
+    "dictionary": {
+      "kanji": "泳ぐ",
+      "hiragana": "およぐ"
+    },
+    "definition": "To swim",
+    "type": "verb-u",
+    "class": "EX"
+  },
+  "Present Affirmative": {
+    "kanji": "泳ぎます",
+    "hiragana": "およぎます"
+  },
+  "Present Negative": {
+    "kanji": "泳ぎません",
+    "hiragana": "およぎません"
+  },
+  "Past Affirmative": {
+    "kanji": "泳ぎました",
+    "hiragana": "およぎました"
+  },
+  "Past Negative": {
+    "kanji": "泳ぎませんでした",
+    "hiragana": "およぎませんでした"
+  },
+  "Te Form": {
+    "kanji": "泳いで",
+    "hiragana": "およいで"
+  }
+},  {
+  "Word": {
+    "dictionary": {
+      "kanji": "遊ぶ",
+      "hiragana": "あそぶ"
+    },
+    "definition": "To play",
+    "type": "verb-u",
+    "class": "EX"
+  },
+  "Present Affirmative": {
+    "kanji": "遊びます",
+    "hiragana": "あそびます"
+  },
+  "Present Negative": {
+    "kanji": "遊びません",
+    "hiragana": "あそびません"
+  },
+  "Past Affirmative": {
+    "kanji": "遊びました",
+    "hiragana": "あそびました"
+  },
+  "Past Negative": {
+    "kanji": "遊びませんでした",
+    "hiragana": "あそびませんでした"
+  },
+  "Te Form": {
+    "kanji": "遊んで",
+    "hiragana": "あそんで"
+  }
+},  {
+  "Word": {
+    "dictionary": {
+      "kanji": "勉強する",
+      "hiragana": "べんきょうする"
+    },
+    "definition": "To study",
+    "type": "verb-u",
+    "class": "112"
+  },
+  "Present Affirmative": {
+    "kanji": "勉強します",
+    "hiragana": "べんきょうします"
+  },
+  "Present Negative": {
+    "kanji": "勉強しません",
+    "hiragana": "べんきょうしません"
+  },
+  "Past Affirmative": {
+    "kanji": "勉強しました",
+    "hiragana": "べんきょうしました"
+  },
+  "Past Negative": {
+    "kanji": "勉強しませんでした",
+    "hiragana": "べんきょうしませんでした"
+  },
+  "Te Form": {
+    "kanji": "勉強して",
+    "hiragana": "べんきょうして"
+  }
+},  {
+  "Word": {
+    "dictionary": {
+      "kanji": "待つ",
+      "hiragana": "まつ"
+    },
+    "definition": "To wait",
+    "type": "verb-u",
+    "class": "EX"
+  },
+  "Present Affirmative": {
+    "kanji": "待ちます",
+    "hiragana": "まちます"
+  },
+  "Present Negative": {
+    "kanji": "待ちません",
+    "hiragana": "まちません"
+  },
+  "Past Affirmative": {
+    "kanji": "待ちました",
+    "hiragana": "まちました"
+  },
+  "Past Negative": {
+    "kanji": "待ちませんでした",
+    "hiragana": "まちませんでした"
+  },
+  "Te Form": {
+    "kanji": "待って",
+    "hiragana": "まって"
+  }
+},  {
+  "Word": {
+    "dictionary": {
+      "kanji": "会う",
+      "hiragana": "あう"
+    },
+    "definition": "To meet (a person)",
+    "type": "verb-u",
+    "class": "EX"
+  },
+  "Present Affirmative": {
+    "kanji": "会います",
+    "hiragana": "あいます"
+  },
+  "Present Negative": {
+    "kanji": "会いません",
+    "hiragana": "あいません"
+  },
+  "Past Affirmative": {
+    "kanji": "会いました",
+    "hiragana": "あいました"
+  },
+  "Past Negative": {
+    "kanji": "会いませんでした",
+    "hiragana": "あいませんでした"
+  },
+  "Te Form": {
+    "kanji": "会って",
+    "hiragana": "あって"
   }
 }]

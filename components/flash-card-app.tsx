@@ -10,7 +10,7 @@ import { Check, X } from "lucide-react"
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import type { WritingSystem, VerbForm, WordType } from "@/lib/data"
+import type { WritingSystem, VerbForm, WordType, ClassLevel } from "@/lib/data"
 
 type ConjugationType = "Present Affirmative" | "Present Negative" | "Past Affirmative" | "Past Negative" | "Te Form"
 type AnswerMode = "type" | "reveal"
@@ -23,23 +23,24 @@ interface ConjugationItem {
     }
     definition: string
     type: WordType
+    class: ClassLevel
   }
   "Present Affirmative": {
     kanji: string
     hiragana: string
-  }
+  } | null
   "Present Negative": {
     kanji: string
     hiragana: string
-  }
+  } | null
   "Past Affirmative": {
     kanji: string
     hiragana: string
-  }
+  } | null
   "Past Negative": {
     kanji: string
     hiragana: string
-  }
+  } | null
   "Te Form": {
     kanji: string
     hiragana: string
@@ -63,6 +64,7 @@ export default function FlashCardApp({ conjugationData }: FlashCardAppProps) {
   const [writingSystem, setWritingSystem] = useState<WritingSystem>("hiragana")
   const [verbForm, setVerbForm] = useState<VerbForm>("masu")
   const [showVerbTypes, setShowVerbTypes] = useState(true)
+  const [showClassLevel, setShowClassLevel] = useState(true)
 
   const conjugationTypes: ConjugationType[] = [
     "Present Affirmative",
@@ -76,6 +78,7 @@ export default function FlashCardApp({ conjugationData }: FlashCardAppProps) {
     const savedWritingSystem = localStorage.getItem("writingSystem") as WritingSystem
     const savedVerbForm = localStorage.getItem("verbForm") as VerbForm
     const savedShowVerbTypes = localStorage.getItem("showVerbTypes")
+    const savedShowClassLevel = localStorage.getItem("showClassLevel")
 
     if (savedWritingSystem) {
       setWritingSystem(savedWritingSystem)
@@ -86,7 +89,14 @@ export default function FlashCardApp({ conjugationData }: FlashCardAppProps) {
     if (savedShowVerbTypes !== null) {
       setShowVerbTypes(savedShowVerbTypes === "true")
     }
+    if (savedShowClassLevel !== null) {
+      setShowClassLevel(savedShowClassLevel === "true")
+    }
   }, [])
+
+  useEffect(() => {
+    localStorage.setItem("showClassLevel", showClassLevel.toString())
+  }, [showClassLevel])
 
   const getFilteredConjugationData = useCallback(() => {
     const selectedWords = new Set(JSON.parse(localStorage.getItem("selectedWords") || "[]"))
@@ -94,33 +104,50 @@ export default function FlashCardApp({ conjugationData }: FlashCardAppProps) {
     return conjugationData.filter((item) => selectedWords.has(item.Word.dictionary.kanji))
   }, [conjugationData])
 
+  // Check if a conjugation type is valid for a word
+  const isValidConjugationType = useCallback(
+    (word: ConjugationItem, type: ConjugationType): boolean => {
+      return (
+        Boolean(word[type]) && typeof word[type]?.[writingSystem] === "string" && word[type]?.[writingSystem] !== ""
+      )
+    },
+    [writingSystem],
+  )
+
   const getRandomWord = useCallback(() => {
     const filteredData = getFilteredConjugationData()
+
+    // In specific mode, only include words that have at least one of the selected conjugation types
     const validWords = filteredData.filter((item) => {
-      if (practiceMode === "all") return true
-      return selectedConjugationTypes.some((type) => item[type] !== null && item[type][writingSystem] !== "")
+      if (practiceMode === "all") {
+        // In all mode, make sure the word has at least one valid conjugation type
+        return conjugationTypes.some((type) => isValidConjugationType(item, type))
+      }
+      // In specific mode, make sure the word has at least one of the selected conjugation types
+      return selectedConjugationTypes.some((type) => isValidConjugationType(item, type))
     })
 
     if (validWords.length === 0) return null
     return validWords[Math.floor(Math.random() * validWords.length)]
-  }, [practiceMode, selectedConjugationTypes, getFilteredConjugationData, writingSystem])
+  }, [practiceMode, selectedConjugationTypes, getFilteredConjugationData, isValidConjugationType, conjugationTypes])
 
   const getRandomConjugationType = useCallback(
     (word: ConjugationItem): ConjugationType | null => {
       if (practiceMode === "specific") {
-        const availableTypes = selectedConjugationTypes.filter(
-          (type) => word[type] !== null && word[type][writingSystem] !== "",
-        )
+        // Filter to only include conjugation types that exist for this word
+        const availableTypes = selectedConjugationTypes.filter((type) => isValidConjugationType(word, type))
+
         if (availableTypes.length === 0) return null
         return availableTypes[Math.floor(Math.random() * availableTypes.length)]
       }
 
-      const availableTypes = conjugationTypes.filter((type) => word[type] !== null && word[type][writingSystem] !== "")
+      // In "all" mode, get all valid conjugation types for this word
+      const availableTypes = conjugationTypes.filter((type) => isValidConjugationType(word, type))
 
       if (availableTypes.length === 0) return null
       return availableTypes[Math.floor(Math.random() * availableTypes.length)]
     },
-    [practiceMode, selectedConjugationTypes, writingSystem],
+    [practiceMode, selectedConjugationTypes, isValidConjugationType, conjugationTypes],
   )
 
   const nextCard = useCallback(() => {
@@ -138,9 +165,11 @@ export default function FlashCardApp({ conjugationData }: FlashCardAppProps) {
   }, [getRandomConjugationType, getRandomWord])
 
   const checkAnswer = () => {
-    if (!currentWord || !currentConjugationType) return
+    if (!currentWord || !currentConjugationType || !currentWord[currentConjugationType]) return
 
-    const correctAnswer = currentWord[currentConjugationType][writingSystem]
+    const correctAnswer = currentWord[currentConjugationType]?.[writingSystem]
+    if (!correctAnswer) return
+
     const isAnswerCorrect = userAnswer.trim() === correctAnswer.trim()
 
     setIsCorrect(isAnswerCorrect)
@@ -152,7 +181,7 @@ export default function FlashCardApp({ conjugationData }: FlashCardAppProps) {
     if (conjugationData.length > 0) {
       nextCard()
     }
-  }, [conjugationData, nextCard])
+  }, [conjugationData, practiceMode, selectedConjugationTypes, writingSystem]) // Remove nextCard from dependencies
 
   if (conjugationData.length === 0) {
     return <div className="text-center">Loading data...</div>
@@ -165,8 +194,12 @@ export default function FlashCardApp({ conjugationData }: FlashCardAppProps) {
     if (verbForm === "dictionary") {
       return currentWord.Word.dictionary[writingSystem]
     } else {
-      // For masu form, use the Present Affirmative form
-      return currentWord["Present Affirmative"][writingSystem]
+      // For masu form, use the Present Affirmative form if it exists
+      if (currentWord["Present Affirmative"]) {
+        return currentWord["Present Affirmative"][writingSystem]
+      }
+      // Fall back to dictionary form if masu form doesn't exist (e.g., for adjectives)
+      return currentWord.Word.dictionary[writingSystem]
     }
   }
 
@@ -181,6 +214,12 @@ export default function FlashCardApp({ conjugationData }: FlashCardAppProps) {
 
     // Format other types (for future use)
     return wordType.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())
+  }
+
+  // Function to format class level for display
+  const formatClassLevel = (classLevel: ClassLevel) => {
+    if (classLevel === "EX") return "Extra"
+    return `JPN ${classLevel}`
   }
 
   return (
@@ -279,18 +318,23 @@ export default function FlashCardApp({ conjugationData }: FlashCardAppProps) {
                 (
                 {verbForm === "dictionary"
                   ? currentWord.Word.dictionary.kanji
-                  : currentWord["Present Affirmative"].kanji}
+                  : currentWord["Present Affirmative"]?.kanji || currentWord.Word.dictionary.kanji}
                 )
               </div>
             )}
           </CardTitle>
-          {showVerbTypes && currentWord && (
-            <div className="flex justify-center">
+          <div className="flex justify-center gap-2 flex-wrap">
+            {showVerbTypes && currentWord && (
               <Badge variant="outline" className="mt-1">
                 {formatWordType(currentWord.Word.type)}
               </Badge>
-            </div>
-          )}
+            )}
+            {showClassLevel && currentWord && (
+              <Badge variant="outline" className="mt-1">
+                {formatClassLevel(currentWord.Word.class)}
+              </Badge>
+            )}
+          </div>
           {currentWord && <p className="text-center text-sm text-muted-foreground">{currentWord.Word.definition}</p>}
           <p className="text-center text-muted-foreground">
             Conjugate to: <span className="font-medium">{currentConjugationType}</span>
@@ -317,30 +361,33 @@ export default function FlashCardApp({ conjugationData }: FlashCardAppProps) {
               </div>
             ) : null}
 
-            {((answerMode === "type" && showAnswer) || (answerMode === "reveal" && showAnswer)) && (
-              <div
-                className={`p-4 rounded-md ${
-                  answerMode === "reveal" || isCorrect
-                    ? "bg-green-100 dark:bg-green-900/20"
-                    : "bg-red-100 dark:bg-red-900/20"
-                }`}
-              >
-                <p className="font-medium">
-                  {answerMode === "reveal" ? "Answer:" : isCorrect ? "Correct!" : "Not quite right."}
-                </p>
-                <p>
-                  {answerMode === "type" ? "The correct answer is: " : ""}
-                  <span className="font-bold">
-                    {currentWord?.[currentConjugationType || ""]?.[writingSystem] || ""}
-                  </span>
-                  {writingSystem !== "kanji" &&
-                    currentConjugationType &&
-                    currentWord?.[currentConjugationType]?.kanji && (
-                      <span className="text-muted-foreground ml-2">({currentWord[currentConjugationType].kanji})</span>
-                    )}
-                </p>
-              </div>
-            )}
+            {((answerMode === "type" && showAnswer) || (answerMode === "reveal" && showAnswer)) &&
+              currentWord &&
+              currentConjugationType &&
+              currentWord[currentConjugationType] && (
+                <div
+                  className={`p-4 rounded-md ${
+                    answerMode === "reveal" || isCorrect
+                      ? "bg-green-100 dark:bg-green-900/20"
+                      : "bg-red-100 dark:bg-red-900/20"
+                  }`}
+                >
+                  <p className="font-medium">
+                    {answerMode === "reveal" ? "Answer:" : isCorrect ? "Correct!" : "Not quite right."}
+                  </p>
+                  <p>
+                    {answerMode === "type" ? "The correct answer is: " : ""}
+                    <span className="font-bold">{currentWord[currentConjugationType]?.[writingSystem] || ""}</span>
+                    {writingSystem !== "kanji" &&
+                      currentConjugationType &&
+                      currentWord[currentConjugationType]?.kanji && (
+                        <span className="text-muted-foreground ml-2">
+                          ({currentWord[currentConjugationType]?.kanji})
+                        </span>
+                      )}
+                  </p>
+                </div>
+              )}
           </div>
         </CardContent>
         <CardFooter className="flex justify-between">
