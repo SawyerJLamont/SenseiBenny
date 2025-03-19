@@ -141,7 +141,7 @@ export const conjugationData: ConjugationItem[] = [
       "hiragana": "たべる"
     },
     "definition": "To eat",
-    "type": "verb-u"
+    "type": "verb-ru"
   },
   "Present Affirmative": {
     "kanji": "食べます",
@@ -452,5 +452,63 @@ export const conjugationData: ConjugationItem[] = [
   "Te Form": {
     "kanji": "困って",
     "hiragana": "こまって"
+  }
+},  {
+  "Word": {
+    "dictionary": {
+      "kanji": "いる",
+      "hiragana": "いる"
+    },
+    "definition": "To be (not alive)",
+    "type": "verb-ru"
+  },
+  "Present Affirmative": {
+    "kanji": "います",
+    "hiragana": "います"
+  },
+  "Present Negative": {
+    "kanji": "いません",
+    "hiragana": "いません"
+  },
+  "Past Affirmative": {
+    "kanji": "いました",
+    "hiragana": "いました"
+  },
+  "Past Negative": {
+    "kanji": "いませんでした",
+    "hiragana": "いませんでした"
+  },
+  "Te Form": {
+    "kanji": null,
+    "hiragana": null
+  }
+},  {
+  "Word": {
+    "dictionary": {
+      "kanji": "ある",
+      "hiragana": "ある"
+    },
+    "definition": "To be (animate)",
+    "type": "verb-u"
+  },
+  "Present Affirmative": {
+    "kanji": "あります",
+    "hiragana": "あります"
+  },
+  "Present Negative": {
+    "kanji": "ありません",
+    "hiragana": "ありません"
+  },
+  "Past Affirmative": {
+    "kanji": "ありました",
+    "hiragana": "ありました"
+  },
+  "Past Negative": {
+    "kanji": "ありませんでした",
+    "hiragana": "ありませんでした"
+  },
+  "Te Form": {
+    "kanji": null,
+    "hiragana": null
   }
 }]
