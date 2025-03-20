@@ -12,6 +12,8 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import type { WritingSystem, VerbForm, WordType, ClassLevel } from "@/lib/data"
 
+// Updated to include the new "te-form" mode
+type PracticeMode = "all" | "specific" | "te-form"
 type ConjugationType = "Present Affirmative" | "Present Negative" | "Past Affirmative" | "Past Negative" | "Te Form"
 type AnswerMode = "type" | "reveal"
 
@@ -52,12 +54,13 @@ interface FlashCardAppProps {
 }
 
 export default function FlashCardApp({ conjugationData }: FlashCardAppProps) {
+  // Updated practiceMode state to include "te-form" option
+  const [practiceMode, setPracticeMode] = useState<PracticeMode>("all")
   const [currentWord, setCurrentWord] = useState<ConjugationItem | null>(null)
   const [currentConjugationType, setCurrentConjugationType] = useState<ConjugationType | null>(null)
   const [userAnswer, setUserAnswer] = useState("")
   const [showAnswer, setShowAnswer] = useState(false)
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null)
-  const [practiceMode, setPracticeMode] = useState<"all" | "specific">("all")
   const [selectedConjugationTypes, setSelectedConjugationTypes] = useState<ConjugationType[]>(["Present Affirmative"])
   const [open, setOpen] = useState(false)
   const [answerMode, setAnswerMode] = useState<AnswerMode>("type")
@@ -66,6 +69,7 @@ export default function FlashCardApp({ conjugationData }: FlashCardAppProps) {
   const [showVerbTypes, setShowVerbTypes] = useState(true)
   const [showClassLevel, setShowClassLevel] = useState(true)
 
+  // All available conjugation types
   const conjugationTypes: ConjugationType[] = [
     "Present Affirmative",
     "Present Negative",
@@ -74,11 +78,14 @@ export default function FlashCardApp({ conjugationData }: FlashCardAppProps) {
     "Te Form",
   ]
 
+  // Load saved preferences from localStorage
   useEffect(() => {
     const savedWritingSystem = localStorage.getItem("writingSystem") as WritingSystem
     const savedVerbForm = localStorage.getItem("verbForm") as VerbForm
     const savedShowVerbTypes = localStorage.getItem("showVerbTypes")
     const savedShowClassLevel = localStorage.getItem("showClassLevel")
+    // Load saved practice mode if available
+    const savedPracticeMode = localStorage.getItem("practiceMode") as PracticeMode
 
     if (savedWritingSystem) {
       setWritingSystem(savedWritingSystem)
@@ -92,12 +99,21 @@ export default function FlashCardApp({ conjugationData }: FlashCardAppProps) {
     if (savedShowClassLevel !== null) {
       setShowClassLevel(savedShowClassLevel === "true")
     }
+    if (savedPracticeMode && ["all", "specific", "te-form"].includes(savedPracticeMode)) {
+      setPracticeMode(savedPracticeMode)
+    }
   }, [])
+
+  // Save practice mode to localStorage when it changes
+  useEffect(() => {
+    localStorage.setItem("practiceMode", practiceMode)
+  }, [practiceMode])
 
   useEffect(() => {
     localStorage.setItem("showClassLevel", showClassLevel.toString())
   }, [showClassLevel])
 
+  // Get filtered conjugation data based on user selection
   const getFilteredConjugationData = useCallback(() => {
     const selectedWords = new Set(JSON.parse(localStorage.getItem("selectedWords") || "[]"))
     if (selectedWords.size === 0) return conjugationData
@@ -114,23 +130,29 @@ export default function FlashCardApp({ conjugationData }: FlashCardAppProps) {
     [writingSystem],
   )
 
+  // Get a random word for practice based on current practice mode
   const getRandomWord = useCallback(() => {
     const filteredData = getFilteredConjugationData()
 
-    // In specific mode, only include words that have at least one of the selected conjugation types
+    // Filter words based on practice mode
     const validWords = filteredData.filter((item) => {
       if (practiceMode === "all") {
         // In all mode, make sure the word has at least one valid conjugation type
         return conjugationTypes.some((type) => isValidConjugationType(item, type))
+      } else if (practiceMode === "te-form") {
+        // In te-form mode, only include words with valid Te Form conjugations
+        return isValidConjugationType(item, "Te Form")
+      } else {
+        // In specific mode, make sure the word has at least one of the selected conjugation types
+        return selectedConjugationTypes.some((type) => isValidConjugationType(item, type))
       }
-      // In specific mode, make sure the word has at least one of the selected conjugation types
-      return selectedConjugationTypes.some((type) => isValidConjugationType(item, type))
     })
 
     if (validWords.length === 0) return null
     return validWords[Math.floor(Math.random() * validWords.length)]
   }, [practiceMode, selectedConjugationTypes, getFilteredConjugationData, isValidConjugationType, conjugationTypes])
 
+  // Get a random conjugation type for the current word based on practice mode
   const getRandomConjugationType = useCallback(
     (word: ConjugationItem): ConjugationType | null => {
       if (practiceMode === "specific") {
@@ -139,6 +161,9 @@ export default function FlashCardApp({ conjugationData }: FlashCardAppProps) {
 
         if (availableTypes.length === 0) return null
         return availableTypes[Math.floor(Math.random() * availableTypes.length)]
+      } else if (practiceMode === "te-form") {
+        // In te-form mode, always return Te Form as the conjugation type
+        return "Te Form"
       }
 
       // In "all" mode, get all valid conjugation types for this word
@@ -150,6 +175,7 @@ export default function FlashCardApp({ conjugationData }: FlashCardAppProps) {
     [practiceMode, selectedConjugationTypes, isValidConjugationType, conjugationTypes],
   )
 
+  // Move to the next card
   const nextCard = useCallback(() => {
     const word = getRandomWord()
     if (!word) return
@@ -164,6 +190,7 @@ export default function FlashCardApp({ conjugationData }: FlashCardAppProps) {
     setIsCorrect(null)
   }, [getRandomConjugationType, getRandomWord])
 
+  // Check the user's answer
   const checkAnswer = () => {
     if (!currentWord || !currentConjugationType || !currentWord[currentConjugationType]) return
 
@@ -224,11 +251,21 @@ export default function FlashCardApp({ conjugationData }: FlashCardAppProps) {
 
   return (
     <div className="space-y-6">
+      {/* Practice mode selection buttons */}
       <div className="flex flex-col sm:flex-row gap-4 justify-between">
-        <div className="flex items-center space-x-2">
+        <div className="flex flex-wrap items-center space-x-2">
           <Button variant={practiceMode === "all" ? "default" : "outline"} onClick={() => setPracticeMode("all")}>
             Random Practice
           </Button>
+          
+          {/* New Te Form Only button */}
+          <Button 
+            variant={practiceMode === "te-form" ? "default" : "outline"} 
+            onClick={() => setPracticeMode("te-form")}
+          >
+            Te Form Only
+          </Button>
+          
           <Button
             variant={practiceMode === "specific" ? "default" : "outline"}
             onClick={() => setPracticeMode("specific")}
@@ -237,6 +274,7 @@ export default function FlashCardApp({ conjugationData }: FlashCardAppProps) {
           </Button>
         </div>
 
+        {/* Specific practice type selector - only shown when in "specific" mode */}
         {practiceMode === "specific" && (
           <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
@@ -278,6 +316,7 @@ export default function FlashCardApp({ conjugationData }: FlashCardAppProps) {
         )}
       </div>
 
+      {/* Selected conjugation types display - only shown when in "specific" mode */}
       {practiceMode === "specific" && (
         <div className="flex flex-wrap gap-2">
           {selectedConjugationTypes.map((type) => (
@@ -297,6 +336,13 @@ export default function FlashCardApp({ conjugationData }: FlashCardAppProps) {
               </button>
             </Badge>
           ))}
+        </div>
+      )}
+
+      {/* In te-form mode, display a message explaining what's happening */}
+      {practiceMode === "te-form" && (
+        <div className="text-sm text-muted-foreground text-center">
+          Practicing Te Form conjugations only
         </div>
       )}
 
@@ -415,4 +461,3 @@ export default function FlashCardApp({ conjugationData }: FlashCardAppProps) {
     </div>
   )
 }
-

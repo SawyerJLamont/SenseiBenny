@@ -42,6 +42,7 @@ export default function VocabSelector({ conjugationData }: VocabSelectorProps) {
   const [verbForm, setVerbForm] = useState<VerbForm>("masu")
   const [showVerbTypes, setShowVerbTypes] = useState(true)
   const [showClassLevel, setShowClassLevel] = useState(true)
+  const [startWithEnglish, setStartWithEnglish] = useState(false)
 
   // Load saved selection from localStorage on mount
   useEffect(() => {
@@ -50,6 +51,7 @@ export default function VocabSelector({ conjugationData }: VocabSelectorProps) {
     const savedVerbForm = localStorage.getItem("verbForm") as VerbForm
     const savedShowVerbTypes = localStorage.getItem("showVerbTypes")
     const savedShowClassLevel = localStorage.getItem("showClassLevel")
+    const savedStartWithEnglish = localStorage.getItem("startWithEnglish")
 
     if (saved) {
       setSelectedWords(new Set(JSON.parse(saved)))
@@ -65,6 +67,9 @@ export default function VocabSelector({ conjugationData }: VocabSelectorProps) {
     }
     if (savedShowClassLevel !== null) {
       setShowClassLevel(savedShowClassLevel === "true")
+    }
+    if (savedStartWithEnglish !== null) {
+      setStartWithEnglish(savedStartWithEnglish === "true")
     }
   }, [])
 
@@ -92,6 +97,11 @@ export default function VocabSelector({ conjugationData }: VocabSelectorProps) {
   useEffect(() => {
     localStorage.setItem("showClassLevel", showClassLevel.toString())
   }, [showClassLevel])
+
+  // Save start with English preference
+  useEffect(() => {
+    localStorage.setItem("startWithEnglish", startWithEnglish.toString())
+  }, [startWithEnglish])
 
   const toggleWord = (word: string) => {
     const newSelection = new Set(selectedWords)
@@ -240,6 +250,10 @@ export default function VocabSelector({ conjugationData }: VocabSelectorProps) {
             <Switch id="show-class-level" checked={showClassLevel} onCheckedChange={setShowClassLevel} />
             <Label htmlFor="show-class-level">Show class level (JPN 111, JPN 112, etc.)</Label>
           </div>
+          <div className="flex items-center space-x-2">
+            <Switch id="start-with-english" checked={startWithEnglish} onCheckedChange={setStartWithEnglish} />
+            <Label htmlFor="start-with-english">Start with English (English → Japanese practice)</Label>
+          </div>
         </div>
 
         <Separator />
@@ -329,4 +343,3 @@ export default function VocabSelector({ conjugationData }: VocabSelectorProps) {
     </Card>
   )
 }
-
