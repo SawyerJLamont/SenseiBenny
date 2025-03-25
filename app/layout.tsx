@@ -12,7 +12,11 @@ const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
   title: "Sensei Benny",
-  description: "Practice Japanese word conjugations",
+  description: "Practice Japanese word conjugations", 
+  icons: {
+    icon: "/FavBenny.png",
+    apple: "/FavBenny.png",
+  },
 }
 
 export default function RootLayout({
@@ -45,8 +49,13 @@ export default function RootLayout({
           <div className="min-h-screen flex flex-col w-full">
             <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-10">
               <nav className="max-w-5xl mx-auto px-4 flex items-center justify-between h-14">
-                <Link href="/" className="font-semibold text-lg">
-                  Sensei Benny
+              <Link href="/" className="flex items-center">
+                  <img
+                    src="/BetterLogo.svg"
+                    alt="Sensei Benny"
+                    className="h-64 w-auto mt-6"
+                    title="Sensei Benny"
+                  />
                 </Link>
                 <TooltipProvider>
                   <div className="flex items-center gap-2">
