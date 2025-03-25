@@ -209,17 +209,38 @@ export default function FlashCardApp({ conjugationData }: FlashCardAppProps) {
   }, [getRandomConjugationType, getRandomWord])
 
   // Check the user's answer
-  const checkAnswer = () => {
-    if (!currentWord || !currentConjugationType || !currentWord[currentConjugationType]) return
-
-    const correctAnswer = currentWord[currentConjugationType]?.[writingSystem]
-    if (!correctAnswer) return
-
-    const isAnswerCorrect = userAnswer.trim() === correctAnswer.trim()
-
-    setIsCorrect(isAnswerCorrect)
-    setShowAnswer(true)
+const checkAnswer = () => {
+  // First ensure conversion is complete
+  if (inputRef.current) {
+    // Force a final conversion of the input value
+    const finalJapaneseText = wanakana.toHiragana(inputRef.current.value);
+    setUserAnswer(finalJapaneseText);
+    
+    // Small timeout to ensure state update has completed
+    setTimeout(() => {
+      if (!currentWord || !currentConjugationType || !currentWord[currentConjugationType]) return;
+      
+      const correctAnswer = currentWord[currentConjugationType]?.[writingSystem];
+      if (!correctAnswer) return;
+      
+      const isAnswerCorrect = finalJapaneseText.trim() === correctAnswer.trim();
+      
+      setIsCorrect(isAnswerCorrect);
+      setShowAnswer(true);
+    }, 10);
+  } else {
+    // Fallback if ref is not available
+    if (!currentWord || !currentConjugationType || !currentWord[currentConjugationType]) return;
+      
+    const correctAnswer = currentWord[currentConjugationType]?.[writingSystem];
+    if (!correctAnswer) return;
+    
+    const isAnswerCorrect = userAnswer.trim() === correctAnswer.trim();
+    
+    setIsCorrect(isAnswerCorrect);
+    setShowAnswer(true);
   }
+};
 
   // Call nextCard when practice mode or conjugation types change
   useEffect(() => {
