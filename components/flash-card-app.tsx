@@ -1,6 +1,7 @@
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
+import * as wanakana from "wanakana"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -55,19 +56,20 @@ interface FlashCardAppProps {
 
 export default function FlashCardApp({ conjugationData }: FlashCardAppProps) {
   // Updated practiceMode state to include "te-form" option
-  const [practiceMode, setPracticeMode] = useState<PracticeMode>("all")
-  const [currentWord, setCurrentWord] = useState<ConjugationItem | null>(null)
-  const [currentConjugationType, setCurrentConjugationType] = useState<ConjugationType | null>(null)
-  const [userAnswer, setUserAnswer] = useState("")
-  const [showAnswer, setShowAnswer] = useState(false)
-  const [isCorrect, setIsCorrect] = useState<boolean | null>(null)
-  const [selectedConjugationTypes, setSelectedConjugationTypes] = useState<ConjugationType[]>(["Present Affirmative"])
-  const [open, setOpen] = useState(false)
-  const [answerMode, setAnswerMode] = useState<AnswerMode>("type")
-  const [writingSystem, setWritingSystem] = useState<WritingSystem>("hiragana")
-  const [verbForm, setVerbForm] = useState<VerbForm>("masu")
-  const [showVerbTypes, setShowVerbTypes] = useState(true)
-  const [showClassLevel, setShowClassLevel] = useState(true)
+  const [practiceMode, setPracticeMode] = useState<PracticeMode>("all") // Updated to include "te-form" as initial state
+  const [currentWord, setCurrentWord] = useState<ConjugationItem | null>(null) // Updated to include null as initial state
+  const [currentConjugationType, setCurrentConjugationType] = useState<ConjugationType | null>(null) // Updated to include null as initial state
+  const [userAnswer, setUserAnswer] = useState("") // Updated to include empty string as initial state
+  const [showAnswer, setShowAnswer] = useState(false) // Updated to include false as initial state
+  const [isCorrect, setIsCorrect] = useState<boolean | null>(null) // Updated to include null as initial state
+  const [selectedConjugationTypes, setSelectedConjugationTypes] = useState<ConjugationType[]>(["Present Affirmative"]) // Updated to include Present Affirmative as default
+  const [open, setOpen] = useState(false) // New state for conjugation type selector
+  const [answerMode, setAnswerMode] = useState<AnswerMode>("type") // New state for answer mode
+  const [writingSystem, setWritingSystem] = useState<WritingSystem>("hiragana") // New state for writing system
+  const [verbForm, setVerbForm] = useState<VerbForm>("masu") // New state for verb form
+  const [showVerbTypes, setShowVerbTypes] = useState(true) // New state for showing verb types
+  const [showClassLevel, setShowClassLevel] = useState(true) // New state for showing class level
+  const inputRef = useRef<HTMLInputElement>(null) // Ref for the answer input in Japanese
 
   // All available conjugation types
   const conjugationTypes: ConjugationType[] = [
@@ -112,6 +114,22 @@ export default function FlashCardApp({ conjugationData }: FlashCardAppProps) {
   useEffect(() => {
     localStorage.setItem("showClassLevel", showClassLevel.toString())
   }, [showClassLevel])
+
+  // New effect to bind/unbind wanakana to the input field
+  useEffect(() => {
+    if (inputRef.current) {
+      wanakana.bind(inputRef.current, {
+        IMEMode: true,
+        useObsoleteKana: false,
+      })
+    }
+
+    return () => {
+      if (inputRef.current) {
+        wanakana.unbind(inputRef.current)
+      }
+    }
+  }, [])
 
   // Get filtered conjugation data based on user selection
   const getFilteredConjugationData = useCallback(() => {
@@ -257,15 +275,15 @@ export default function FlashCardApp({ conjugationData }: FlashCardAppProps) {
           <Button variant={practiceMode === "all" ? "default" : "outline"} onClick={() => setPracticeMode("all")}>
             Random Practice
           </Button>
-          
+
           {/* New Te Form Only button */}
-          <Button 
-            variant={practiceMode === "te-form" ? "default" : "outline"} 
+          <Button
+            variant={practiceMode === "te-form" ? "default" : "outline"}
             onClick={() => setPracticeMode("te-form")}
           >
             Te Form Only
           </Button>
-          
+
           <Button
             variant={practiceMode === "specific" ? "default" : "outline"}
             onClick={() => setPracticeMode("specific")}
@@ -301,9 +319,8 @@ export default function FlashCardApp({ conjugationData }: FlashCardAppProps) {
                         }}
                       >
                         <Check
-                          className={`mr-2 h-4 w-4 ${
-                            selectedConjugationTypes.includes(type) ? "opacity-100" : "opacity-0"
-                          }`}
+                          className={`mr-2 h-4 w-4 ${selectedConjugationTypes.includes(type) ? "opacity-100" : "opacity-0"
+                            }`}
                         />
                         {type}
                       </CommandItem>
@@ -392,10 +409,11 @@ export default function FlashCardApp({ conjugationData }: FlashCardAppProps) {
               <div>
                 <Label htmlFor="answer">Your Answer</Label>
                 <Input
+                  ref={inputRef}
                   id="answer"
                   value={userAnswer}
                   onChange={(e) => setUserAnswer(e.target.value)}
-                  placeholder="Type your answer here"
+                  placeholder="Type romaji to enter Japanese"
                   disabled={showAnswer}
                   className="text-lg"
                   onKeyDown={(e) => {
@@ -412,11 +430,10 @@ export default function FlashCardApp({ conjugationData }: FlashCardAppProps) {
               currentConjugationType &&
               currentWord[currentConjugationType] && (
                 <div
-                  className={`p-4 rounded-md ${
-                    answerMode === "reveal" || isCorrect
+                  className={`p-4 rounded-md ${answerMode === "reveal" || isCorrect
                       ? "bg-green-100 dark:bg-green-900/20"
                       : "bg-red-100 dark:bg-red-900/20"
-                  }`}
+                    }`}
                 >
                   <p className="font-medium">
                     {answerMode === "reveal" ? "Answer:" : isCorrect ? "Correct!" : "Not quite right."}

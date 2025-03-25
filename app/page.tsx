@@ -31,8 +31,9 @@ export default function Home() {
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold">Japanese Study</h1>
           <Link href="/select">
-            <Button variant="outline" size="icon">
-              <Settings className="h-4 w-4" />
+            <Button variant="outline">
+              <Settings size={24} />
+              <span className="ml-2">Conjugation Settings</span>
             </Button>
           </Link>
         </div>

@@ -40,7 +40,7 @@ export default function FirstTimeModal() {
         <DialogHeader>
           <DialogTitle>Welcome to Sensei Benny</DialogTitle>
           <DialogDescription>
-            If you are a Oregon State Student, this is a tool to help you practive the conjugations
+            If you are an Oregon State Student, this is a tool to help you practive the conjugations
             of Japanese verbs we have learned in class. I have also added a few extra words that I think are
             useful to know. If you are not from Oregon State, you can still use this tool to practice
             Japanese verb conjugations. Please look at the quick guide before jumping in so that you can 

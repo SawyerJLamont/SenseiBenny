@@ -38,7 +38,8 @@ export default function GettingStartedPage() {
               <ul className="list-disc list-inside space-y-2 text-muted-foreground">
                 <li>Random Practice: Test all conjugation types</li>
                 <li>Specific Practice: Focus on particular conjugation patterns</li>
-                <li>Type Answer: Write your answers to test recall (Must be written in hiragana or kanji, will not work with romanji)</li>
+                <li>Te Form Practice: While you can select this in the particular mode, due to its importance, it has its own section!</li>
+                <li>Type Answer: Write your answers to test recall</li>
                 <li>Reveal Answer: Study the patterns without testing</li>
               </ul>
             </div>
