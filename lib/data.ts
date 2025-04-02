@@ -382,8 +382,8 @@ export const conjugationData: ConjugationItem[] = [
 },  {
   "Word": {
     "dictionary": {
-      "kanji": "使いる",
-      "hiragana": "つかいる"
+      "kanji": "使う" ,
+      "hiragana": "つかう"
     },
     "definition": "To use",
     "type": "verb-ru",
