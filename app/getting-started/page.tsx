@@ -28,24 +28,44 @@ export default function GettingStartedPage() {
             <div className="space-y-4">
               <h3 className="text-lg font-semibold">2. Select Your Writing System</h3>
               <p className="text-muted-foreground">
-                Choose between kanji, hiragana, or romaji based on your comfort level. You can change this at any time
-                in the settings.
+                Choose between kanji or hiragana based on your comfort level. You can change this at any time
+                directly on the main practice page.
               </p>
             </div>
 
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold">3. Practice Modes</h3>
+              <h3 className="text-lg font-semibold">3. Practice Types</h3>
               <ul className="list-disc list-inside space-y-2 text-muted-foreground">
                 <li>Random Practice: Test all conjugation types</li>
                 <li>Specific Practice: Focus on particular conjugation patterns</li>
-                <li>Te Form Practice: While you can select this in the particular mode, due to its importance, it has its own section!</li>
+                <li>Te Form Practice: Focus specifically on Te Form conjugations</li>
+              </ul>
+            </div>
+
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold">4. Display Modes</h3>
+              <p className="text-muted-foreground">
+                Choose how flashcards are presented to you:
+              </p>
+              <ul className="list-disc list-inside space-y-2 text-muted-foreground">
+                <li><strong>Word → Conjugation</strong>: See the word and conjugate it to the requested form</li>
+                <li><strong>Definition → Conjugation</strong>: See only the English definition and conjugate to the requested form</li>
+              </ul>
+              <p className="text-muted-foreground">
+                Definition mode is more challenging as you need to recall the word before conjugating it!
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold">5. Answer Methods</h3>
+              <ul className="list-disc list-inside space-y-2 text-muted-foreground">
                 <li>Type Answer: Write your answers to test recall</li>
                 <li>Reveal Answer: Study the patterns without testing</li>
               </ul>
             </div>
 
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold">4. Check the Hints</h3>
+              <h3 className="text-lg font-semibold">6. Check the Hints</h3>
               <p className="text-muted-foreground">
                 Visit the hints page to see conjugation charts and helpful tips for mastering Japanese verb forms.
               </p>
@@ -68,4 +88,3 @@ export default function GettingStartedPage() {
     </main>
   )
 }
-

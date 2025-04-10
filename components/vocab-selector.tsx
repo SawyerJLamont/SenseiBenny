@@ -7,7 +7,6 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { Checkbox } from "@/components/ui/checkbox"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Label } from "@/components/ui/label"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
 import { Switch } from "@/components/ui/switch"
@@ -38,29 +37,21 @@ export default function VocabSelector({ conjugationData }: VocabSelectorProps) {
   const router = useRouter()
   const [selectedWords, setSelectedWords] = useState<Set<string>>(new Set())
   const [isAllSelected, setIsAllSelected] = useState(false)
-  const [writingSystem, setWritingSystem] = useState<WritingSystem>("hiragana")
-  const [verbForm, setVerbForm] = useState<VerbForm>("masu")
   const [showVerbTypes, setShowVerbTypes] = useState(true)
   const [showClassLevel, setShowClassLevel] = useState(true)
-  const [startWithEnglish, setStartWithEnglish] = useState(false)
+  const [writingSystem, setWritingSystem] = useState<WritingSystem>("hiragana")
+  const [verbForm, setVerbForm] = useState<VerbForm>("masu")
 
   // Load saved selection from localStorage on mount
   useEffect(() => {
     const saved = localStorage.getItem("selectedWords")
-    const savedWritingSystem = localStorage.getItem("writingSystem") as WritingSystem
-    const savedVerbForm = localStorage.getItem("verbForm") as VerbForm
     const savedShowVerbTypes = localStorage.getItem("showVerbTypes")
     const savedShowClassLevel = localStorage.getItem("showClassLevel")
-    const savedStartWithEnglish = localStorage.getItem("startWithEnglish")
+    const savedWritingSystem = localStorage.getItem("writingSystem") as WritingSystem
+    const savedVerbForm = localStorage.getItem("verbForm") as VerbForm
 
     if (saved) {
       setSelectedWords(new Set(JSON.parse(saved)))
-    }
-    if (savedWritingSystem) {
-      setWritingSystem(savedWritingSystem)
-    }
-    if (savedVerbForm) {
-      setVerbForm(savedVerbForm)
     }
     if (savedShowVerbTypes !== null) {
       setShowVerbTypes(savedShowVerbTypes === "true")
@@ -68,8 +59,11 @@ export default function VocabSelector({ conjugationData }: VocabSelectorProps) {
     if (savedShowClassLevel !== null) {
       setShowClassLevel(savedShowClassLevel === "true")
     }
-    if (savedStartWithEnglish !== null) {
-      setStartWithEnglish(savedStartWithEnglish === "true")
+    if (savedWritingSystem) {
+      setWritingSystem(savedWritingSystem)
+    }
+    if (savedVerbForm) {
+      setVerbForm(savedVerbForm)
     }
   }, [])
 
@@ -77,16 +71,6 @@ export default function VocabSelector({ conjugationData }: VocabSelectorProps) {
   useEffect(() => {
     localStorage.setItem("selectedWords", JSON.stringify(Array.from(selectedWords)))
   }, [selectedWords])
-
-  // Save writing system preference
-  useEffect(() => {
-    localStorage.setItem("writingSystem", writingSystem)
-  }, [writingSystem])
-
-  // Save verb form preference
-  useEffect(() => {
-    localStorage.setItem("verbForm", verbForm)
-  }, [verbForm])
 
   // Save show verb types preference
   useEffect(() => {
@@ -97,11 +81,6 @@ export default function VocabSelector({ conjugationData }: VocabSelectorProps) {
   useEffect(() => {
     localStorage.setItem("showClassLevel", showClassLevel.toString())
   }, [showClassLevel])
-
-  // Save start with English preference
-  useEffect(() => {
-    localStorage.setItem("startWithEnglish", startWithEnglish.toString())
-  }, [startWithEnglish])
 
   const toggleWord = (word: string) => {
     const newSelection = new Set(selectedWords)
@@ -205,41 +184,9 @@ export default function VocabSelector({ conjugationData }: VocabSelectorProps) {
   return (
     <Card className="w-full">
       <CardHeader>
-        <CardTitle>Practice Settings</CardTitle>
+        <CardTitle>Word Selection</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold">Writing System</h3>
-          <RadioGroup value={writingSystem} onValueChange={(value) => setWritingSystem(value as WritingSystem)}>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="kanji" id="kanji" />
-              <Label htmlFor="kanji">Kanji (漢字)</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="hiragana" id="hiragana" />
-              <Label htmlFor="hiragana">Hiragana (ひらがな)</Label>
-            </div>
-          </RadioGroup>
-        </div>
-
-        <Separator />
-
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold">Verb Form</h3>
-          <RadioGroup value={verbForm} onValueChange={(value) => setVerbForm(value as VerbForm)}>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="dictionary" id="dictionary" />
-              <Label htmlFor="dictionary">Dictionary Form (見る, 食べる)</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="masu" id="masu" />
-              <Label htmlFor="masu">Masu Form (見ます, 食べます)</Label>
-            </div>
-          </RadioGroup>
-        </div>
-
-        <Separator />
-
         <div className="space-y-4">
           <h3 className="text-lg font-semibold">Display Options</h3>
           <div className="flex items-center space-x-2">
@@ -249,10 +196,6 @@ export default function VocabSelector({ conjugationData }: VocabSelectorProps) {
           <div className="flex items-center space-x-2">
             <Switch id="show-class-level" checked={showClassLevel} onCheckedChange={setShowClassLevel} />
             <Label htmlFor="show-class-level">Show class level (JPN 111, JPN 112, etc.)</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <Switch id="start-with-english" checked={startWithEnglish} onCheckedChange={setStartWithEnglish} />
-            <Label htmlFor="start-with-english">Start with English (English → Japanese practice)</Label>
           </div>
         </div>
 
